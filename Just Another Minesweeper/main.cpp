@@ -8,7 +8,7 @@
 
 
 #include <iostream>
-#include <ctime>
+#include <time.h>
 #include <cstdlib>
 #include <cmath>
 #include <string.h>
@@ -61,38 +61,38 @@ int minecount (int Table[TABLEMAXSIZE][TABLEMAXSIZE])
 }
 
 
-string drawblock (int block)
+void drawblock (int block)
 {
     switch (block) {
         case 666:
-            return "|x";
+            cout << "|x";
             break;
         case 0:
-            return "|_";
+            cout << "|_";
             break;
         case 1:
-            return "|1";
+            cout << "|1";
             break;
         case 2:
-            return "|2";
+            cout << "|2";
             break;
         case 3:
-            return "|3";
+            cout << "|3";
             break;
         case 4:
-            return "|4";
+            cout << "|4";
             break;
         case 5:
-            return "|5";
+            cout << "|5";
             break;
         case 6:
-            return "|6";
+            cout << "|6";
             break;
         case 7:
-            return "|7";
+            cout << "|7";
             break;
         default:
-            return "|8";
+            cout << "|8";
             break;
     }
 }
@@ -163,7 +163,7 @@ int main(void) {
         }
         
         cout << "    Adding Mines.. " << endl;
-        srand(static_cast<unsigned int>(time(NULL)));;// we don't wanna get the same "random" every TIME!
+        srand(static_cast<unsigned int>(time(NULL)));// we don't wanna get the same "random" every TIME!
         while (MineGen < Mines) {
             Table[rand()%Size][rand()%Size] = 666;
             //cout << "minegen" << MineGen << "minecount" << minecount(Table)<< endl; //debug
@@ -227,7 +227,7 @@ int main(void) {
                 cout << yi; // y margin
                 for (int xi = 0; xi < Size ; xi++) {
                     if (revealed[xi][yi] == 1) {
-                        cout << drawblock(Table[xi][yi]);
+                        drawblock(Table[xi][yi]);
                     }else {
                         cout << "|#";
                         
@@ -259,20 +259,42 @@ int main(void) {
                 } else {//if not let's roll!
                         revealed[X][Y] = 1;
                         // let's reveal more! (if 0, all neighboring table[][] == 0)
-                        // LOOKING FOR A NON-RECURSIVE WAY TO DO THIS!!!! >:O-
+                        // LOOKING FOR AN EASIER WAY TO DO THIS!!!! >:O-
                         // nb : RECURSIVE IS NOT AN OPTION
                         // thanks for your help! ;)
                     if (Table[X][Y] == 0) {
-                        for (int yj =(Y-1<0)?0:Y-1; yj <= Y+1 && yj != TABLEMAXSIZE ; yj++) {
-                            for (int xj =(X-1<0)?0:X-1; xj <= X+1 && xj != TABLEMAXSIZE; xj++) {
-                                if (Table[xj][yj] != 666) {
-                                    revealed[xj][yj] = 1;
+                        bool keepsweeping = true;
+                        do{
+                            keepsweeping = false;
+                            for (int yi = 0; yi < Size; yi++) {  //sweeping all over the board!
+                                for (int xi = 0; xi < Size; xi++) {
+                                    if (Table[xi][yi] == 0 && revealed[xi][yi] == 0) { //if there's a hidden 0, check for revealed friends
+                                        for (int yj =(yi-1<0)?0:yi-1; yj <= yi+1 && yj != TABLEMAXSIZE ; yj++) {                                            for (int xj =(xi-1<0)?0:xi-1; xj <= xi+1 && xj != TABLEMAXSIZE; xj++) {
+                                                if (revealed[xj][yj] == 1 && Table[xj][yj] == 0) { //if revealed 0 neighbor
+                                                    revealed[xi][yi] = 1; // reveal me!
+                                                    keepsweeping = true; // and keep going..
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }while (keepsweeping);
+                        // showing revealed board edge numbers!
+                        for (int yi = 0; yi < Size; yi++) { // sweeping all over the board again!
+                            for (int xi = 0; xi < Size; xi++) {
+                                if (Table[xi][yi] == 0 && revealed[xi][yi] == 1) {
+                                    // if there's a revealed 0, make sure he's not lonely
+                                    for (int yk =(yi-1<0)?0:yi-1; yk <= yi+1 && yk != TABLEMAXSIZE ; yk++) {
+                                        for (int xk =(xi-1<0)?0:xi-1; xk <= xi+1 && xk != TABLEMAXSIZE; xk++) {
+                                        revealed[xk][yk] = 1; // revealing 0's neighbors!
+                                        }
+                                    }
                                 }
                             }
                         }
+                        // end of additional sweeping... Got a better way? HELP ME!!!
                     }
-
-                    
                 }
             }
             
