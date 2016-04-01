@@ -257,21 +257,22 @@ int main(void) {
                     cout << ">>>>> BBBAAAAAZZZAAAAAMMM!! <<<<<<" << endl << "( Means you're Pixie dust :D )" << endl;
                     gameON = false;
                 } else {//if not let's roll!
-                    do {
                         revealed[X][Y] = 1;
                         // let's reveal more! (if 0, all neighboring table[][] == 0)
                         // LOOKING FOR A NON-RECURSIVE WAY TO DO THIS!!!! >:O-
                         // nb : RECURSIVE IS NOT AN OPTION
                         // thanks for your help! ;)
-
+                    if (Table[X][Y] == 0) {
                         for (int yj =(Y-1<0)?0:Y-1; yj <= Y+1 && yj != TABLEMAXSIZE ; yj++) {
                             for (int xj =(X-1<0)?0:X-1; xj <= X+1 && xj != TABLEMAXSIZE; xj++) {
                                 if (Table[xj][yj] != 666) {
-                                        revealed[xj][yj] = 1;
+                                    revealed[xj][yj] = 1;
                                 }
                             }
                         }
-                    } while (Table[X][Y] == 0 && revealed[X][Y] == 0); 
+                    }
+
+                    
                 }
             }
             
