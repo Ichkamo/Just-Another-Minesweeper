@@ -302,6 +302,7 @@ int main(void) {
             //check if player is eligible to see the easter egg
             if (easterEgg > 10) {
                 cout << " ^ Like this message? Try RUNESCAPE!" << endl;
+                easterEgg = 0;
             }
             
             
